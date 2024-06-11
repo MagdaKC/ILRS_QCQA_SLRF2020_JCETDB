@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="css/butt.css" type="text/css" />
+  <link rel="stylesheet" href="css/butt2.css" type="text/css" />
+       <!-- 1. Add these JavaScript inclusions in the head of your page -->
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.1/jquery-ui.js"></script>
+        <!-- highcharts-->
+<script src="http://code.highcharts.com/stock/highstock.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/highcharts-more.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+<script src="highcharts-regression.js"> </script>
+<script src="https://rawgithub.com/RolandBanguiran/highcharts-scalable-yaxis/master/scalable-yaxis.js"></script>
+<script type="text/javascript" src="http://www.highcharts.com/samples/data/three-series-1000-points.js"></script>
+<script src="highcharts-regression.js"> </script>
+
+
+<script>
+    //Wait until the document is ready to be processed.
+    jQuery(document).ready(function()
+    {
+        //Init your dialog box.
+        $("#dialog").dialog({autoOpen:true,
+    position: [20, 20],
+
+    open: function(event, ui) {
+        var $dialog  = $(event.target);
+        var position = $dialog.dialog('option', 'position');
+        $dialog.closest('.ui-dialog').css({
+            left: position[0],
+            top:  position[1]
+        });
+    },
+    resizable: false,width: 350,height: 80});
+
+        //Attach you click handler to the button.
+        $("#opener").click(function(event)
+        {
+            //Stop any default actions on the button.
+            event.preventDefault();
+            //Open your dialog.
+            $("#dialog").dialog("open");
+        });
+    });
+    </script>
+<script>
+    //Wait until the document is ready to be processed.
+    jQuery(document).ready(function()
+    {
+        //Init your dialog box.
+        $("#dialog2").dialog({autoOpen:false,
+    position: [1000, 300],
+    resizable: false,width: 200});
+
+        //Attach you click handler to the button.
+        $("#opener2").click(function(event)
+        {
+            //Stop any default actions on the button.
+            event.preventDefault();
+            //Open your dialog.
+            $("#dialog2").dialog("open");
+        });
+    });
+    </script>
+<script>
+    //Wait until the document is ready to be processed.
+    jQuery(document).ready(function()
+    {
+        //Init your dialog box.
+        $("#dialog3").dialog({autoOpen:false,
+    position: [1000, 400],
+    resizable: false,width: 200});
+
+        //Attach you click handler to the button.
+        $("#opener3").click(function(event)
+        {
+            //Stop any default actions on the button.
+            event.preventDefault();
+            //Open your dialog.
+            $("#dialog3").dialog("open");
+        });
+    });
+    </script>
+<script>
+$(function () {
+window.chart = new Highcharts.StockChart({
+        chart: {
+            renderTo: 'container',
+zoomType: 'xy',
+                events: {
+                    redraw: function () {
+                        var series = this.series[0];
+                        var dataY = {value: 0, count: 0};
+                        var points = series.points;
+                         ppp=0;
+                        for (var i = 0; i < points.length; i++) {
+                               dataY.value += points[i].y;
+                           dataY.count +=1;
+                       }
+                        MEAN=dataY.value/dataY.count;
+
+                        for (var i = 0; i < points.length; i++) {
+                            dataY.value2 = (points[i].y-MEAN)*(points[i].y-MEAN);
+                                pp=dataY.value2;
+                                ppp=ppp+pp;
+                       }
+
+MEAN=dataY.value/dataY.count;
+pp2=ppp/dataY.count;
+STD2=Math.sqrt(pp2);
+//var STD2 = STD2.toFixed(4);
+var STD2 = STD2.toFixed(<?php echo $FIX ?>);
+//var MEAN = MEAN.toFixed(4);
+var MEAN = MEAN.toFixed(<?php echo $FIX ?>);
+$('.MEAN').text(MEAN);
+$('.STD').html(STD2);
+var html = "";
+
+             html += "<span>Mean/Std. Dev.: " + MEAN + "</span>" + " &plusmn; " + STD2 + " </span>"+ "Count:" +  dataY.count + " </span><br />";
+            $("#dialog").html(html == "" ? "No results" : html);
+// $report.html( 'avgX: ' + dataX.value / dataX.count);
+                    }
+                }
+        },
+       xAxis : {labels: { style: { color: '#000000', fontSize: '10px' } },
+                gridLineWidth: 1,
+ordinal: false,
+                type : 'datetime',
+title: { text: 'DATE',style: { color: '#000000', fontSize: '12px' } },
+                maxZoom : 1 * 24 * 3600000 // 1day
+        },
+tooltip: {valueDecimals: 4,
+            formatter: function() {
+                var s = '<b>'+ Highcharts.dateFormat('%A, %b %e, %Y', this.x) +'</b>' + '<br/> '+ '<?php echo $type ?> '  + this.y + '<br/> ';
+
+            
+                return s;
+
+            }
+        },
+legend: {
+enabled: true,
+                layout: 'vertical',
+                align: 'left',
+                verticalAlign: 'top',
+                x: 100,
+                y: 170,
+                floating: true,
+                backgroundColor: '#FFFFFF',
+                borderWidth: 1
+            },
+navigator: {outlineColor: '<?php echo $color1 ?>',outlineWidth: 2, series: { color: '<?php echo $color1 ?>' } },
+
+rangeSelector: { buttons: [
+                                             { type: 'week', count: 1, text: '1w' },
+                                             { type: 'month', count: 1, text: '1m' },
+                                             { type: 'month', count: 6, text: '6m' },
+                                             { type: 'year', count: 1, text: '1y' },
+                                             { type: 'year', count: 2, text: '2y' },
+                                             { type: 'year', count: 3, text: '3y' },
+                                             { type: 'all', text: 'All' }],
+                                             selected: 7 },
+title: {
+text: '<?php echo $title1 ?> ',
+            margin: 70,
+align: 'right',
+x: -100
+        },
+subtitle: {
+            useHTML:true,
+            //text: '<div id="lhsTitle"><img src="http://geodesy.jcet.umbc.edu/css/l2.png" /> Data Handling File</div><div id="chsTitle"><img src="http://geodesy.jcet.umbc.edu/css/c2.png" />  Discontinuities File</div><div id="rhsTitle"><img src="http://geodesy.jcet.umbc.edu/css/r2.png" /> SCH SCI</div>',
+            align: 'left',
+            x:  5
+        },
+plotOptions:{
+turboThreshold: Infinity
+            },
+
+        series: [{
+			name: 'MSFT',
+			data: MSFT
+        }]
+	});
+
+	$('#button').click(function() {
+        var buttons = $('.choice');
+        var chart = $('#container').highcharts();
+        
+        buttons.each(function(){
+            
+            var currentBox = $(this);
+            var isChecked = currentBox.is(':checked');
+            var wasChecked = currentBox.data("wasChecked");
+            var choice = currentBox.value;
+
+            if(!wasChecked && isChecked)
+            {
+                var series = chart.addSeries({
+                    name: choice,
+                    data:  [(1278748800000,1),(2262426400000,100)]
+                });     
+                currentBox.data("series", series);
+            }
+            
+            if(wasChecked && !isChecked)
+            {
+                var series = currentBox.data("series");
+                
+                series.remove();
+            }
+            
+            if(isChecked)
+            {
+                currentBox.data("wasChecked", true);
+            }
+            else
+            {
+                currentBox.data("wasChecked", false);
+            }
+            
+        });
+
+	});
+});
+</script>
+</head>
+<body>
+
+<div class="contentSection">
+<div class="contentToPrint">
+    <div id="container" style="border: 2px solid #2E4C3D;width: 1000px; height: 720px"></div>
+<button id="button">Add series</button>
+
+<form action="">
+<input type="checkbox" class="choice" name="choice" value="ADBE">ADBE
+<br/>
+<input type="checkbox" class="choice" name="choice" value="OTHER">OTHER
+</form>
+</div> </div>
+
+
+<div id="dialog" class="ui-dialog1"> Mean/Std. Dev.:  <?php echo $avg ?> &#177; <?php echo $std ?> Count: <?php echo $num ?>  </div>
+<table  style="margin-top:10px; margin-left:0px;" style="text-align: left; height: 24px; width: 193px;" border="3"
+cellpadding="0" cellspacing="3">
+</div>
+<tbody>
+<tr>
+<td style="vertical-align: top; text-align: left; width: 53px;">
+<input type="button" text-align="center" value="HOME" class="Web_OnlineTools" onclick="open_winH()">
+</td>
+<td style="vertical-align: top; text-align: left; width: 53px;">
+ <input type="button" text-align="center" value="New Plot" class="Web_OnlineTools" onclick="open_win()">
+</td>
+</td>
+<td style="vertical-align: top; text-align: left; width: 53px;">
+ <?print("<INPUT TYPE=\"BUTTON\" text-align=\"center\"  class=\"Web_OnlineTools\"  VALUE=\"Download Data\" ONCLICK=\"window.open('".$downloadlink."')\">"); ?>
+</td>
+<td style="vertical-align: top; text-align: left; width: 53px;">
+<button id="opener" class="Web_OnlineTools">Statistics</button>
+</td>
+
+<td style="vertical-align: middle; text-align: center; width: 124px;">
+    <a href="#" class="Web_OnlineTools"  id="printOut">Print PDF</a>
+</td>
+</tr>
+</tbody>
+  </div>
+  </div>
+<br/>
+
+
+<script type="text/javascript">
+    $(function(){
+        $('#printOut').click(function(e){
+            e.preventDefault();
+            var w = window.open();
+            var printOne = $('.contentToPrint').html();
+            var print11 = $('.ui-dialog1').html();
+   w.document.write('<center>')
+   w.document.write('EVALUATION OF WEEKLY AWG PRODUCTS')
+   w.document.write('<html><head><title>EVALUATION OF WEEKLY AWG PRODUCTS</title></head><body>' + printOne ) + '</body></html>';
+   w.document.write('<br>')
+   w.document.write('<br>')
+   w.document.write('<br>')
+   w.document.write('<br>')
+   w.document.write('<center>')
+   w.document.write('<table border="1" cellspacing="1" cellpadding="5" style="background-color:#C8FFB5;"  >')
+   w.document.write('<tr>')
+   w.document.write('<td  style="vertical-align: middle; text-align: center;"><?php echo $station_nameN ?> <?php echo $title1 ?></td>')
+   w.document.write('</tr>')
+   w.document.write('<tr style="vertical-align: middle; text-align: center;">')
+   w.document.write('<td>' + print11  + '</td>')
+   w.document.write('</tr>')
+   w.document.write('</table>')
+
+            w.window.print();
+            return false;
+        });
+    });
+</script>
+
+</body>
+</html>
+
+
+<?php
+// to file
+if ($_POST[PLOTS2]=="wssoc" or $_POST[PLOTS2]=="vf"  )
+{ $query2 = "SELECT observation_date as datetime2, to_char($plot, '999999D999999') as value from $tab where observation_date > '$start_date' and observation_date < '$end_date' ORDER BY observation_date ;"; }
+elseif ( $_POST[PLOTS2]=="drwrms" )
+{
+if ($_POST[combination_center]=="ilrsb" )
+{ $query2 = "SELECT observation_date as datetime2, to_char($plot * 1000, '999999D999999') as value from $tab where observation_date > '$start_date' and observation_date < '$end_date' and station_id='$station_nameN' ORDER BY observation_date  ;"; }
+else
+{ $query2 = "SELECT observation_date as datetime2, to_char($plot, '999999D999999') as value from $tab where observation_date > '$start_date' and observation_date < '$end_date' and station_id='$station_nameN' ORDER BY observation_date  ;"; }
+}
+else
+{ $query2 = "SELECT observation_date as datetime2, to_char($plot, '999999D') as value from $tab where observation_date > '$start_date' and observation_date < '$end_date' ORDER BY observation_date ;"; }
+
+
+$result = pg_query($query2) or die(" " );
+$data = array();
+$output= $tt. "\n";
+fwrite($file, $output); 
+$output ="  DATE          ," ;
+fwrite($file, $output); 
+$output= $_SESSION['type']. "\n";
+fwrite($file, $output); 
+while ($row = pg_fetch_array($result, null, PGSQL_ASSOC)) {
+//echo $datetime;
+//echo $row['value'];
+//echo      $row['datetime2'] . "," . $row['value2']. "\n";
+$output = $row['datetime2'] . " , " . $row['value']. "\n";
+fwrite($file, $output);
+}
+fclose ($file);
+
+
+ //copy($newfile, $newfile2) or die("Blad przy kopiowaniu2");
+//if ($dir = @opendir("/tmp/")) {
+//   while($file = readdir($dir)) {
+//sort($files);
+//      echo "$file\n";
+//   }
+//   closedir($dir);
+//}
+
+//echo $newfile ; //retrieve data
+//echo $newfile2 ; //retrieve data
+?>
+

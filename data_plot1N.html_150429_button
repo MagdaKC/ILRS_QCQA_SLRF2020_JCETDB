@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="css/butt.css" type="text/css" />
+  <link rel="stylesheet" href="css/butt2.css" type="text/css" />
+       <!-- 1. Add these JavaScript inclusions in the head of your page -->
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+    <script src="http://code.jquery.com/ui/1.9.1/jquery-ui.js"></script>
+        <!-- highcharts-->
+<script src="http://code.highcharts.com/stock/highstock.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/highcharts-more.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+<script src="highcharts-regression.js"> </script>
+<script src="https://rawgithub.com/RolandBanguiran/highcharts-scalable-yaxis/master/scalable-yaxis.js"></script>
+
+
+<?
+include_once('./common.php');
+dl_local('pgsql_new.so');
+$t=time();
+//echo($t . "<br />");
+//echo(date("h:s",$t));
+$tt=date("d-M-Y H:i");
+$t=date("H:i",$t);
+$combination_center = $_POST[combination_center];
+$analysis_center = $_POST[analysis_center];
+$plot= $_POST[PLOTS2];
+$start_date=$_POST['start_date'];
+$end_date=$_POST['end_date'];
+$y_min=$_POST['y_min'];
+$y_max=$_POST['y_max'];
+$color1=$_POST['color1'];
+$marktype1=$_POST['marktype1'];
+$station_name = $_POST['station_name'];
+//echo $station_name.'<br/><br/>';
+$split = preg_split("/[\s]/", $station_name);
+$station_name = $split[1];
+$station_nameN = $split[0];
+//echo $y_min.'<br/><br/>';
+//echo $y_max.'<br/><br/>';
+//echo $color1.'<br/><br/>';
+//echo $marktype1.'<br/><br/>';
+//echo $tab.'<br/><br/>';
+////SCALE defult
+	$mm="radius:2";
+if ($_POST[marktype1]=="circle_e")
+{$marktype1="circle";
+$mm="radius:2,fillColor: 'transparent',lineWidth: 1, lineColor: null";}
+if ($_POST[marktype1]=="square_e")
+{$marktype1="square";
+	$mm="radius:2,fillColor: 'transparent',lineWidth: 1, lineColor: null";}
+
+	if ($_POST[marktype1]=="diamond_e")
+{$marktype1="diamond";
+	$mm="radius:2,fillColor: 'transparent',lineWidth: 1, lineColor: null";}
+
+	if ($_POST[marktype1]=="triangle_e")
+{$marktype1="triangle";
+	$mm="radius:2,fillColor: 'transparent',lineWidth: 1, lineColor: null";}
+
+	if ($_POST[marktype1]=="triangle-down_e")
+{$marktype1="triangle-down";
+	$mm="radius:2,fillColor: 'transparent',lineWidth: 1, lineColor: null";}
+
+
+//echo $marktype1.'<br/><br/>';
+//echo $mm.'<br/><br/>';
+//echo $_POST[PLOTS2].'<br/><br/>';
+
+
+if ($_POST['y_max']=="Max" or $_POST['y_max']=="")
+{
+if ($_POST[PLOTS2]=="number_of_stations")
+{$y_max="30";}
+if ($_POST[PLOTS2]=="obs")
+{$y_max="6000";}
+if ($_POST[PLOTS2]=="unk")
+{$y_max="300";}
+if ($_POST[PLOTS2]=="wssoc")
+{$y_max="2";}
+if ($_POST[PLOTS2]=="vf")
+//{$y_max="0.0005";}
+{$y_max="null";}
+if ($_POST[PLOTS2]=="drwrms")
+{$y_max="300";}
+}
+if ($_POST['y_min']=="Min" or $_POST['y_min']=="")
+{
+if ($_POST[PLOTS2]=="number_of_stations")
+{$y_min="5";}
+if ($_POST[PLOTS2]=="obs")
+{$y_min="0";}
+if ($_POST[PLOTS2]=="unk")
+{$y_min="100";}
+if ($_POST[PLOTS2]=="wssoc")
+{$y_min="0";}
+if ($_POST[PLOTS2]=="vf")
+//{$y_min="0.00001";}
+{$y_min="null";}
+if ($_POST[PLOTS2]=="drwrms")
+{$y_min="0";}
+}
+//echo $y_min.'<br/><br/>';
+//echo $y_max.'<br/><br/>';
+//echo $_POST[PLOTS2].'<br/><br/>';
+////SCALE defult
+
+//echo TEST;
+//echo $_POST[PLOTS2].'<br/><br/>';
+
+{$tab = "$_POST[combination_center]_info_$_POST[analysis_center]";}
+if ($_POST[PLOTS2]=="number_of_stations")
+{$type="Number Of Stations";
+$title1="Weekly Number Of Stations AC($analysis_center) CC($combination_center)";}
+if ($_POST[PLOTS2]=="obs")
+{$type="Number Of Observations";
+$title1="Weekly Number Of Observations AC($analysis_center) CC($combination_center)";}
+if ($_POST[PLOTS2]=="unk")
+{$type="NUMBER OF PARAMETERS";
+$title1="Weekly Number Of Parameters AC($analysis_center) CC($combination_center)";}
+if ($_POST[PLOTS2]=="wssoc")
+{$type="SUM OF SQUARED WEIGHTED MISCLOSURES";
+$title1="Sum of Squared Weighted Misclosures AC($analysis_center) CC($combination_center)";}
+if ($_POST[PLOTS2]=="vf")
+{$type="VARIANCE FACTOR";
+$title1="Variance Factor AC($analysis_center) CC($combination_center)";}
+if ($_POST[PLOTS2]=="drwrms")
+{$tab = "$_POST[combination_center]_position_$_POST[analysis_center]";
+$type="3D Position WRMS [mm]";
+$title1="3D Position WRMS AC($analysis_center) CC($combination_center)";}
+//echo $type.'<br/><br/>';
+$answer=" ";
+if ($_POST[combination_center]=="ilrsa" )
+{$conn_string = "host=perseus.rs.umbc.edu port=5432 dbname=ilrsa password=Ichinen user=jasongroup  connect_timeout=2";
+if ($_POST[analysis_center]=="com")
+	$answer="NO INFORMATION AVAILABLE IN DATA BASE";
+}
+if ($_POST[combination_center]=="ilrsb" )
+{$conn_string = "host=perseus.rs.umbc.edu port=5432 dbname=ilrsb password=Ichinen user=jasongroup  connect_timeout=2";
+if ($_POST[PLOTS2]=="unk" or $_POST[PLOTS2]=="wssoc" or $_POST[analysis_center]=="com")
+	$answer="NO INFORMATION AVAILABLE IN DATA BASE";
+}
+if ($_POST[PLOTS2]=="drwrms")
+{$answer="";}
+
+$db_handle = pg_connect($conn_string);
+if ($_POST[PLOTS2]=="drwrms")
+{
+if ($_POST[combination_center]=="ilrsb" )
+{$query = "SELECT EXTRACT(EPOCH from observation_date at time zone 'utc-00') *1000 as datetime1, $plot *1000 as value from $tab where observation_date > '$start_date' and observation_date < '$end_date'  and station_id='$station_nameN' ORDER BY observation_date ;";}
+else
+{$query = "SELECT EXTRACT(EPOCH from observation_date at time zone 'utc-00') *1000 as datetime1, $plot as value from $tab where observation_date > '$start_date' and observation_date < '$end_date'  and station_id='$station_nameN' ORDER BY observation_date ;";}
+}else{
+$query = "SELECT EXTRACT(EPOCH from observation_date at time zone 'utc-00') *1000 as datetime1, $plot as value from $tab where observation_date > '$start_date' and observation_date < '$end_date' ORDER BY observation_date ;";}
+//echo $query.'<br/><br/>';
+//$result = pg_query($query) or die(" " );
+$result = pg_query($query) or die("<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$answer </font>" );
+$data = array();
+while ($row = pg_fetch_array($result, null, PGSQL_ASSOC)) {
+//$datetime = $row['datetime1']*1000;
+$datetime = $row['datetime1'];
+//echo $datetime;
+//echo $row['value'];
+//fwrite($file, $output);
+ $val  = $row['value'];
+ $data[] = "[$datetime, $val]"; }
+
+if ($_POST[PLOTS2]=="drwrms")
+{
+if ($_POST[combination_center]=="ilrsb" )
+{$queryS = "SELECT distinct AVG ($plot *1000)  from $tab where  observation_date > '$start_date' and observation_date < '$end_date' and station_id='$station_nameN' ;";}
+else
+{$queryS = "SELECT distinct AVG ($plot )  from $tab where  observation_date > '$start_date' and observation_date < '$end_date' and station_id='$station_nameN' ;";}
+}
+else
+{$queryS = "SELECT distinct AVG ($plot)  from $tab where  observation_date > '$start_date' and observation_date < '$end_date' ;";}
+$resultS = pg_query($queryS) or die(" " );
+$avg = pg_fetch_array($resultS, 0, PGSQL_NUM);
+//echo $_POST[PLOTS2].'<br/><br/>';
+if ($_POST[PLOTS2]=="wssoc" or $_POST[PLOTS2]=="vf" or $_POST[PLOTS2]=="drwrms")
+{
+$avg=number_format($avg[0],4);
+//echo $avg.'<br/><br/>';
+$FIX='4';
+//echo $FIX.'<br/><br/>';
+}
+else
+{$avg=number_format($avg[0],0);
+$FIX='0';}
+if ($_POST[PLOTS2]=="drwrms")
+{
+if ($_POST[combination_center]=="ilrsb" )
+{$queryS = "SELECT distinct STDDEV ($plot*1000) from $tab where observation_date > '$start_date' and observation_date < '$end_date' and station_id='$station_nameN' ;";}
+else
+{$queryS = "SELECT distinct STDDEV ($plot) from $tab where observation_date > '$start_date' and observation_date < '$end_date' and station_id='$station_nameN' ;";}
+}
+else
+{$queryS = "SELECT distinct STDDEV ($plot) from $tab where observation_date > '$start_date' and observation_date < '$end_date' ;";}
+$resultS = pg_query($queryS) or die(" " );
+$std = pg_fetch_array($resultS, 0, PGSQL_NUM);
+$std=number_format($std[0],2);
+if ($_POST[PLOTS2]=="drwrms")
+{
+if ($_POST[combination_center]=="ilrsb" )
+{$queryS = "SELECT count ($plot*1000) from $tab where observation_date > '$start_date' and observation_date < '$end_date' and station_id='$station_nameN' ;";}
+else
+{$queryS = "SELECT count ($plot) from $tab where observation_date > '$start_date' and observation_date < '$end_date' and station_id='$station_nameN' ;";}
+}
+else
+{$queryS = "SELECT count ($plot) from $tab where observation_date > '$start_date' and observation_date < '$end_date' ;";}
+//echo $queryS;
+$resultS = pg_query($queryS) or die(" " );
+$num = pg_fetch_array($resultS, 0, PGSQL_NUM);
+$num=number_format($num[0],0);
+//$newfile="/tmp/${plot}_$t.txt";
+$newfile2="/tmp/$plot.txt";
+$newfileE="${plot}_${combination_center}_${analysis_center}";
+$newfile="/tmp/${plot}_${combination_center}_${analysis_center}_${station_nameN}_${t}.csv";
+//$newfile2="/tmp/result.txt";
+if(file_exists("$newfile")) unlink("$newfile");
+unlink($newfile);
+$file = fopen ($newfile, "a");
+//echo $newfile ; //retrieve data
+//echo $newfile2 ; //retrieve data
+?>
+<?php
+session_start();
+//session_register('filename');
+$_SESSION['type'] = $type; // store session data
+$_SESSION['views'] = $newfilea; // store session data
+$_SESSION['filename'] = $newfile; // store session data
+//$_SESSION['filename2'] = $newfile; // store session data
+//echo "Pageviews = ". $_SESSION['views']; //retrieve data
+//echo "Pag = ". $_SESSION['filename']; //retrieve data
+//echo "Pag = ". $_SESSION['filename2']; //retrieve data
+?>
+<script>
+    //Wait until the document is ready to be processed.
+    jQuery(document).ready(function()
+    {
+        //Init your dialog box.
+        $("#dialog").dialog({autoOpen:true,
+    position: [20, 20],
+
+    open: function(event, ui) {
+        var $dialog  = $(event.target);
+        var position = $dialog.dialog('option', 'position');
+        $dialog.closest('.ui-dialog').css({
+            left: position[0],
+            top:  position[1]
+        });
+    },
+    resizable: false,width: 350,height: 80});
+
+        //Attach you click handler to the button.
+        $("#opener").click(function(event)
+        {
+            //Stop any default actions on the button.
+            event.preventDefault();
+            //Open your dialog.
+            $("#dialog").dialog("open");
+        });
+    });
+    </script>
+<script>
+    //Wait until the document is ready to be processed.
+    jQuery(document).ready(function()
+    {
+        //Init your dialog box.
+        $("#dialog2").dialog({autoOpen:false,
+    position: [1000, 300],
+    resizable: false,width: 200});
+
+        //Attach you click handler to the button.
+        $("#opener2").click(function(event)
+        {
+            //Stop any default actions on the button.
+            event.preventDefault();
+            //Open your dialog.
+            $("#dialog2").dialog("open");
+        });
+    });
+    </script>
+<script>
+    //Wait until the document is ready to be processed.
+    jQuery(document).ready(function()
+    {
+        //Init your dialog box.
+        $("#dialog3").dialog({autoOpen:false,
+    position: [1000, 400],
+    resizable: false,width: 200});
+
+        //Attach you click handler to the button.
+        $("#opener3").click(function(event)
+        {
+            //Stop any default actions on the button.
+            event.preventDefault();
+            //Open your dialog.
+            $("#dialog3").dialog("open");
+        });
+    });
+    </script>
+<script>
+$(function () {
+window.chart = new Highcharts.StockChart({
+        chart: {
+            renderTo: 'container',
+zoomType: 'xy',
+                events: {
+                    redraw: function () {
+                        var series = this.series[0];
+                        var dataY = {value: 0, count: 0};
+                        var points = series.points;
+                         ppp=0;
+                        for (var i = 0; i < points.length; i++) {
+                               dataY.value += points[i].y;
+                           dataY.count +=1;
+                       }
+                        MEAN=dataY.value/dataY.count;
+
+                        for (var i = 0; i < points.length; i++) {
+                            dataY.value2 = (points[i].y-MEAN)*(points[i].y-MEAN);
+                                pp=dataY.value2;
+                                ppp=ppp+pp;
+                       }
+
+MEAN=dataY.value/dataY.count;
+pp2=ppp/dataY.count;
+STD2=Math.sqrt(pp2);
+//var STD2 = STD2.toFixed(4);
+var STD2 = STD2.toFixed(<?php echo $FIX ?>);
+//var MEAN = MEAN.toFixed(4);
+var MEAN = MEAN.toFixed(<?php echo $FIX ?>);
+$('.MEAN').text(MEAN);
+$('.STD').html(STD2);
+var html = "";
+
+             html += "<span>Mean/Std. Dev.: " + MEAN + "</span>" + " &plusmn; " + STD2 + " </span>"+ "Count:" +  dataY.count + " </span><br />";
+            $("#dialog").html(html == "" ? "No results" : html);
+// $report.html( 'avgX: ' + dataX.value / dataX.count);
+                    }
+                }
+        },
+       xAxis : {labels: { style: { color: '#000000', fontSize: '10px' } },
+                gridLineWidth: 1,
+ordinal: false,
+                type : 'datetime',
+title: { text: 'DATE',style: { color: '#000000', fontSize: '12px' } },
+                maxZoom : 1 * 24 * 3600000 // 1day
+        },
+tooltip: {valueDecimals: 4,
+            formatter: function() {
+                var s = '<b>'+ Highcharts.dateFormat('%A, %b %e, %Y', this.x) +'</b>' + '<br/> '+ '<?php echo $type ?> '  + this.y + '<br/> ';
+
+            
+                return s;
+
+            }
+        },
+legend: {
+enabled: true,
+                layout: 'vertical',
+                align: 'left',
+                verticalAlign: 'top',
+                x: 100,
+                y: 170,
+                floating: true,
+                backgroundColor: '#FFFFFF',
+                borderWidth: 1
+            },
+yAxis: {labels: { style: { color: '#000000', fontSize: '9px' },align:'right', x:15,formatter: function () {return this.value;} },endOnTick: false, startOnTick: false,
+ title: { text: '<?php echo $type ?>',style: { color: '#000000', fontSize: '10px' },margin: 25 }, min: <?php echo $y_min ?> , max: <?php echo $y_max ?>},
+navigator: {outlineColor: '<?php echo $color1 ?>',outlineWidth: 2, series: { color: '<?php echo $color1 ?>' } },
+
+rangeSelector: { buttons: [
+                                             { type: 'week', count: 1, text: '1w' },
+                                             { type: 'month', count: 1, text: '1m' },
+                                             { type: 'month', count: 6, text: '6m' },
+                                             { type: 'year', count: 1, text: '1y' },
+                                             { type: 'year', count: 2, text: '2y' },
+                                             { type: 'year', count: 3, text: '3y' },
+                                             { type: 'all', text: 'All' }],
+                                             selected: 7 },
+title: {
+text: '<?php echo $title1 ?> ',
+            margin: 70,
+align: 'right',
+x: -100
+        },
+subtitle: {
+            useHTML:true,
+            //text: '<div id="lhsTitle"><img src="http://geodesy.jcet.umbc.edu/css/l2.png" /> Data Handling File</div><div id="chsTitle"><img src="http://geodesy.jcet.umbc.edu/css/c2.png" />  Discontinuities File</div><div id="rhsTitle"><img src="http://geodesy.jcet.umbc.edu/css/r2.png" /> SCH SCI</div>',
+            align: 'left',
+            x:  5
+        },
+plotOptions:{
+turboThreshold: Infinity
+            },
+series : [
+{regression: true ,
+                regressionSettings: {
+                    type: 'linear',
+                    color:  'rgba(223, 83, 83, .9)'
+                }, lineWidth : 0,showInLegend: true,   name: '<?php echo $type ?>  <?php echo $station_name ?>' ,
+    marker: {enabled : true, symbol: '<?php echo $marktype1 ?>' , <?php echo $mm ?> },
+         color: '<?php echo $color1 ?>',
+data: [<?php echo join($data, ',') ?>]
+
+            }]
+    });
+   $('#button').click(function() {
+        chart.addSeries({
+            id: 1,
+            name: 'B',
+            data : (function() {
+                // generate an array of random data
+                var data = [], time =startdate, i;
+
+                for( i = -15; i <= 0; i++) {
+                    data.push([
+                        time + i * 1000,
+                        Math.round(Math.random() * 100)
+                    ]);
+                }
+                return data;
+            })()
+        });
+        $('#button')[0].disabled = true;
+    });
+
+    $('#run').click(function() {
+        setInterval(function() {
+           var x = (new Date()).getTime(), // current time
+               y = Math.round(Math.random() * 100);
+           chart.series[0].addPoint([x, y], false, true);
+           chart.series[1].addPoint([x, y], false, true);
+           chart.redraw();
+        }, 1000);
+    });
+});
+</script>
+</head>
+<body>
+
+<div class="contentSection">
+<div class="contentToPrint">
+    <div id="container" style="border: 2px solid #2E4C3D;width: 1000px; height: 720px"></div>
+<button id="button">Add series</button>
+<button id="run">Add dynamic data</button>
+</div> </div>
+
+
+<div id="dialog" class="ui-dialog1"> Mean/Std. Dev.:  <?php echo $avg ?> &#177; <?php echo $std ?> Count: <?php echo $num ?>  </div>
+<table  style="margin-top:10px; margin-left:0px;" style="text-align: left; height: 24px; width: 193px;" border="3"
+cellpadding="0" cellspacing="3">
+</div>
+<tbody>
+<tr>
+<td style="vertical-align: top; text-align: left; width: 53px;">
+<input type="button" text-align="center" value="HOME" class="Web_OnlineTools" onclick="open_winH()">
+</td>
+<td style="vertical-align: top; text-align: left; width: 53px;">
+ <input type="button" text-align="center" value="New Plot" class="Web_OnlineTools" onclick="open_win()">
+</td>
+</td>
+<td style="vertical-align: top; text-align: left; width: 53px;">
+ <?print("<INPUT TYPE=\"BUTTON\" text-align=\"center\"  class=\"Web_OnlineTools\"  VALUE=\"Download Data\" ONCLICK=\"window.open('".$downloadlink."')\">"); ?>
+</td>
+<td style="vertical-align: top; text-align: left; width: 53px;">
+<button id="opener" class="Web_OnlineTools">Statistics</button>
+</td>
+
+<td style="vertical-align: middle; text-align: center; width: 124px;">
+    <a href="#" class="Web_OnlineTools"  id="printOut">Print PDF</a>
+</td>
+</tr>
+</tbody>
+  </div>
+  </div>
+<br/>
+
+
+<script type="text/javascript">
+    $(function(){
+        $('#printOut').click(function(e){
+            e.preventDefault();
+            var w = window.open();
+            var printOne = $('.contentToPrint').html();
+            var print11 = $('.ui-dialog1').html();
+   w.document.write('<center>')
+   w.document.write('EVALUATION OF WEEKLY AWG PRODUCTS')
+   w.document.write('<html><head><title>EVALUATION OF WEEKLY AWG PRODUCTS</title></head><body>' + printOne ) + '</body></html>';
+   w.document.write('<br>')
+   w.document.write('<br>')
+   w.document.write('<br>')
+   w.document.write('<br>')
+   w.document.write('<center>')
+   w.document.write('<table border="1" cellspacing="1" cellpadding="5" style="background-color:#C8FFB5;"  >')
+   w.document.write('<tr>')
+   w.document.write('<td  style="vertical-align: middle; text-align: center;"><?php echo $station_nameN ?> <?php echo $title1 ?></td>')
+   w.document.write('</tr>')
+   w.document.write('<tr style="vertical-align: middle; text-align: center;">')
+   w.document.write('<td>' + print11  + '</td>')
+   w.document.write('</tr>')
+   w.document.write('</table>')
+
+            w.window.print();
+            return false;
+        });
+    });
+</script>
+
+</body>
+</html>
+
+
+<?php
+// to file
+if ($_POST[PLOTS2]=="wssoc" or $_POST[PLOTS2]=="vf"  )
+{ $query2 = "SELECT observation_date as datetime2, to_char($plot, '999999D999999') as value from $tab where observation_date > '$start_date' and observation_date < '$end_date' ORDER BY observation_date ;"; }
+elseif ( $_POST[PLOTS2]=="drwrms" )
+{
+if ($_POST[combination_center]=="ilrsb" )
+{ $query2 = "SELECT observation_date as datetime2, to_char($plot * 1000, '999999D999999') as value from $tab where observation_date > '$start_date' and observation_date < '$end_date' and station_id='$station_nameN' ORDER BY observation_date  ;"; }
+else
+{ $query2 = "SELECT observation_date as datetime2, to_char($plot, '999999D999999') as value from $tab where observation_date > '$start_date' and observation_date < '$end_date' and station_id='$station_nameN' ORDER BY observation_date  ;"; }
+}
+else
+{ $query2 = "SELECT observation_date as datetime2, to_char($plot, '999999D') as value from $tab where observation_date > '$start_date' and observation_date < '$end_date' ORDER BY observation_date ;"; }
+
+
+$result = pg_query($query2) or die(" " );
+$data = array();
+$output= $tt. "\n";
+fwrite($file, $output); 
+$output ="  DATE          ," ;
+fwrite($file, $output); 
+$output= $_SESSION['type']. "\n";
+fwrite($file, $output); 
+while ($row = pg_fetch_array($result, null, PGSQL_ASSOC)) {
+//echo $datetime;
+//echo $row['value'];
+//echo      $row['datetime2'] . "," . $row['value2']. "\n";
+$output = $row['datetime2'] . " , " . $row['value']. "\n";
+fwrite($file, $output);
+}
+fclose ($file);
+
+
+ //copy($newfile, $newfile2) or die("Blad przy kopiowaniu2");
+//if ($dir = @opendir("/tmp/")) {
+//   while($file = readdir($dir)) {
+//sort($files);
+//      echo "$file\n";
+//   }
+//   closedir($dir);
+//}
+
+//echo $newfile ; //retrieve data
+//echo $newfile2 ; //retrieve data
+?>
+

@@ -1,0 +1,43 @@
+
+<html>
+<head>
+  <link rel="stylesheet" href="css/butt3.css" type="text/css" />
+</head>
+<body>
+<form name="contactus" method="post">
+<table align="center">
+<tbody>
+
+<tr>
+<td align="center" style="vertical-align: top; text-align: center; width: 53px;">
+  <input type="submit"  name="CASE" id="CASE" value="DAILY" class="Web_OnlineTools3"  checked/>
+</td>
+<td>
+  <input type="submit"  name="CASE" id="CASE" value="WEEKLY" class="Web_OnlineTools3"   />
+</form>
+</td>
+</table>
+<body>
+</html>
+
+
+<?php 
+
+//    echo $_POST['CASE'];
+if ($_POST['CASE']=='DAILY') {
+//echo '<span style="color:#006600;text-align:center;">Request has been sent. Please wait for my reply!</span>';
+//echo '<span style="color:#006600;text-align:right;"> DAILY SOLUTIONa</span>';
+//echo "<div align=centre> <font color=blue>One line simple string in   blue color</font>";
+
+print "<font color=#006600><CENTER>DAILY SOLUTION</CENTER></font>"; 
+include "configuration_D.php";
+}
+if ($_POST['CASE']=='WEEKLY') 
+{
+print "<font color=#006600><CENTER>WEEKLY SOLUTION</CENTER></font>"; 
+//echo '<span style="color:#006600;text-align:center;"> WEEKLY SOLUTION</span>';
+//    echo $_POST['CASE'];
+include "configuration_W.php";
+}
+?>
+

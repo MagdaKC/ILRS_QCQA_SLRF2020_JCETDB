@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>
+      Chart
+    </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="http://code.jquery.com/jquery-1.9.1.js" type="text/javascript"></script>
+    <script src="http://code.highcharts.com/highcharts.js" type="text/javascript"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js" type="text/javascript"></script>
+        <script src="regression.min_l.js"></script>
+
+<?
+include_once('./common.php');
+dl_local('pgsql_new.so');
+$conn_string = "host=perseus.rs.umbc.edu port=5432 dbname=ilrsb user=jasongroup  connect_timeout=2";
+$db_handle = pg_connect($conn_string);
+
+$query ="SELECT EXTRACT(EPOCH from observation_date at time zone 'utc-00') *1000 as datetime, number_of_stations as value, obs as value2 from ilrsb_info_asi where observation_date > '1-1-1983' and observation_date < '1-1-2015' ORDER BY observation_date ;";
+//$query ="SELECT EXTRACT(EPOCH from observation_date at time zone 'utc-00') *1000 as datetime, number_of_stations2 as value, obs as value2 from ilrsb_info_asi where observation_date > '1-1-1983' and observation_date < '1-1-2015' ORDER BY observation_date ;";
+$result = pg_query($query) or die("<center><font color='red' size='24'>Could not connecta </font>" );
+$data = array();
+$data2 = array();
+while ($row = pg_fetch_array($result, null, PGSQL_ASSOC)) {
+	$datetime = $row['datetime'];
+	//echo $datetime;
+	//echo $row['value'];
+	//fwrite($file, $output);
+	 $val  = $row['value'];
+	 $val2  = $row['value2'];
+	  $data[] = "[$datetime, $val]";
+ }
+echo $result;
+?>
+  </body>
+</html>

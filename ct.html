@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>
+      Chart
+    </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="http://code.jquery.com/jquery-1.9.1.js" type="text/javascript"></script>
+    <script src="http://code.highcharts.com/highcharts.js" type="text/javascript"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js" type="text/javascript"></script>
+<script src="//rawgithub.com/phpepe/highcharts-regression/master/highcharts-regression.js"> </script>
+
+
+<?
+include_once('./common.php');
+dl_local('pgsql_new.so');
+$conn_string = "host=perseus.rs.umbc.edu port=5432 dbname=ilrsb user=jasongroup  connect_timeout=2";
+$db_handle = pg_connect($conn_string);
+
+$query ="SELECT EXTRACT(EPOCH from observation_date at time zone 'utc-00') *1000 as datetime, number_of_stations as value from ilrsb_info_asi where observation_date > '1-1-1983' and observation_date < '1-1-2015' ORDER BY observation_date ;";
+$result = pg_query($query) or die("<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$answer </font>" );
+$data = array();
+while ($row = pg_fetch_array($result, null, PGSQL_ASSOC)) {
+	$datetime = $row['datetime'];
+	//echo $datetime;
+	//echo $row['value'];
+	//fwrite($file, $output);
+	 $val  = $row['value'];
+	  $data[] = "[$datetime, $val]"; }
+		  print_r($data);
+?>
+    <script type="text/javascript">
+$(function () {
+//        $('#container').highcharts({
+ $('#container').highcharts({
+            chart: {
+                type: 'scatter',
+                zoomType: 'xy'
+            },
+            xAxis: {
+   type : 'datetime',
+                title: {
+                    enabled: true,
+                    text: 'Height (cm)'
+                },
+                startOnTick: true,
+                endOnTick: true,
+                showLastLabel: true
+            },
+            yAxis: {
+                title: {
+                    text: 'Weight (kg)'
+                }
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'left',
+                verticalAlign: 'top',
+                x: 100,
+                y: 70,
+                floating: true,
+                backgroundColor: '#FFFFFF',
+                borderWidth: 1
+            },
+            plotOptions: {
+                scatter: {
+                    marker: {
+                        radius: 5,
+                        states: {
+                            hover: {
+                                enabled: true,
+                                lineColor: 'rgb(100,100,100)'
+                            }
+                        }
+                    },
+                    states: {
+                        hover: {
+                            marker: {
+                                enabled: false
+                            }
+                        }
+                    },
+                    tooltip: {
+                        headerFormat: '<b>{series.name}</b><br>',
+                        pointFormat: '{point.x} cm, {point.y} kg'
+                    }
+                }
+            },
+            series: [{
+                regression: true ,
+                regressionSettings: {
+                    type: 'linear',
+                    color:  'rgba(223, 83, 83, .9)'
+                },
+                name: 'Female',
+                color: 'rgba(223, 83, 83, .5)',
+// data:[[167.6, 64.5], [167.6, 72.3], [167.6, 61.4], [154.9, 58.2], [162.6, 81.8]]
+                data:  [<?php echo join($data, ',') ?>]
+    
+            }]
+        });
+  $('#button').click(function () {
+        var chart = $('#container').highcharts();
+        chart.addSeries({
+regression: true ,
+                regressionSettings: {
+                    type: 'linear',
+                    color:  'rgba(223, 83, 83, .9)'
+                },
+ data:  [<?php echo join($data, ',') ?>]
+//            data:[[167.6, 64.5], [167.6, 72.3], [167.6, 61.4], [154.9, 58.2], [162.6, 81.8]]
+        });
+    });
+    });
+    </script>
+  </head>
+  <body>
+    <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+<button id="button" class="autocompare">Add series</button>
+  </body>
+</html>

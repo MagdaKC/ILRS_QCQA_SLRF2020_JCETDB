@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>
+      Chart
+    </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="http://code.jquery.com/jquery-1.9.1.js" type="text/javascript"></script>
+    <script src="http://code.highcharts.com/highcharts.js" type="text/javascript"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js" type="text/javascript"></script>
+        <script src="highcharts-regression.js"></script>
+
+
+<?
+include_once('./common.php');
+dl_local('pgsql_new.so');
+$conn_string = "host=perseus.rs.umbc.edu port=5432 dbname=ilrsb user=jasongroup  connect_timeout=2";
+$db_handle = pg_connect($conn_string);
+
+//$query ="SELECT EXTRACT(EPOCH from observation_date at time zone 'utc-00') *1000 as datetime, number_of_stations as value from ilrsb_info_asi where observation_date > '1-1-1983' and observation_date < '1-1-2015' ORDER BY observation_date ;";
+$query ="SELECT EXTRACT(EPOCH from observation_date at time zone 'utc-00') *1000 as datetime, number_of_stations as value, obs as value2 from ilrsb_info_asi where observation_date > '1-1-1983' and observation_date < '1-1-2015' ORDER BY observation_date ;";
+
+$result = pg_query($query) or die("<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$answer </font>" );
+$data = array();
+$data2 = array();
+while ($row = pg_fetch_array($result, null, PGSQL_ASSOC)) {
+	$datetime = $row['datetime'];
+	//echo $datetime;
+	//echo $row['value'];
+	//fwrite($file, $output);
+	 $val  = $row['value'];
+	 $val2  = $row['value2'];
+	  $data[] = "[$datetime, $val]";
+ }
+?>
+<?
+// LINEAR
+$queryLINEAR ="SELECT EXTRACT(EPOCH from observation_date at time zone 'utc-00') *1000 as datetime, EXTRACT(EPOCH from observation_date at time zone 'utc-00') *1000*0.000000000006628+11.86 as value3 from ilrsb_info_asi where observation_date > '1-1-1983' and observation_date < '1-1-2015' ORDER BY observation_date ;";
+$result = pg_query($queryLINEAR) or die("<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$answer </font>" );
+$data3 = array();
+while ($row = pg_fetch_array($result, null, PGSQL_ASSOC)) {
+	$datetime = $row['datetime'];
+	//echo $datetime;
+	//echo $row['value'];
+	//fwrite($file, $output);
+	 $val3  = $row['value3'];
+	  $data3[] = "[$datetime, $val3]";
+ }
+// LINEAR
+$queryLINEAR ="SELECT EXTRACT(EPOCH from observation_date at time zone 'utc-00') *1000 as datetime, EXTRACT(EPOCH from observation_date at time zone 'utc-00') *1000*0.000000000006628+51.86 as value4 from ilrsb_info_asi where observation_date > '1-1-1983' and observation_date < '1-1-2015' ORDER BY observation_date ;";
+$result = pg_query($queryLINEAR) or die("<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$answer </font>" );
+$data4 = array();
+while ($row = pg_fetch_array($result, null, PGSQL_ASSOC)) {
+	$datetime = $row['datetime'];
+	//echo $datetime;
+	//echo $row['value'];
+	//fwrite($file, $output);
+	 $val4  = $row['value4'];
+	  $data4[] = "[$datetime, $val4]";
+ }
+        //  print_r($data);
+        //  print_r($data3);
+?>
+    <script type="text/javascript">
+$(function () {
+//        $('#container').highcharts({
+ $('#container').highcharts({
+            chart: {
+                type: 'scatter',
+                zoomType: 'xy'
+            },
+            xAxis: {
+   type : 'datetime',
+                title: {
+                    enabled: true,
+                    text: 'Height (cm)'
+                },
+                startOnTick: true,
+                endOnTick: true,
+                showLastLabel: true
+            },
+            yAxis: {
+                title: {
+                    text: 'Weight (kg)'
+                }
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'left',
+                verticalAlign: 'top',
+                x: 100,
+                y: 70,
+                floating: true,
+                backgroundColor: '#FFFFFF',
+                borderWidth: 1
+            },
+            plotOptions: {
+                scatter: {
+                    marker: {
+                        radius: 5,
+                        states: {
+                            hover: {
+                                enabled: true,
+                                lineColor: 'rgb(100,100,100)'
+                            }
+                        }
+                    },
+                    states: {
+                        hover: {
+                            marker: {
+                                enabled: false
+                            }
+                        }
+                    },
+                    tooltip: {
+                        headerFormat: '<b>{series.name}</b><br>',
+                        pointFormat: '{point.x} cm, {point.y} kg'
+                    }
+                }
+            },
+            series: [
+{ name: 'Female', color: 'rgba(283, 83, 83, .5)', data:  [<?php echo join($data, ',') ?>], },
+
+]
+        });
+  $('#button').click(function () {
+        var chart = $('#container').highcharts();
+        chart.addSeries({
+ regression: true ,
+                regressionSettings: {
+                    type: 'linear',
+                    color:  'rgba(83, 83, 83, .9)'
+                },
+
+
+lineWidth : 2,marker: {enabled : false},
+
+
+
+
+
+ data:  [<?php echo join($data, ',') ?>]
+        });
+    });
+
+  $('#button2').click(function () {
+        var chart = $('#container').highcharts();
+        chart.addSeries({lineWidth : 2,marker: {enabled : false},
+ data:  [<?php echo join($data4, ',') ?>]
+        });
+    });
+
+  $('#button3').click(function () {
+        var chart = $('#container').highcharts();
+            var data = [Math.random(0,100)*100,Math.random(0,100)*10];
+        chart.addSeries({lineWidth : 2,marker: {enabled : false},
+ data: data
+        });
+    });
+  $('#button5').click(function () {
+        var chart = $('#container').highcharts();
+            var data = [<?php echo join($data4, ',') ?>];
+        chart.addSeries({name: 'Female2',lineWidth : 2,marker: {enabled : false},
+ data: data
+        });
+    });
+  $('#button4').click(function () {
+        var chart = $('#container').highcharts();
+chart.addSeries({
+                regression: true ,
+               regressionSettings: {
+                    type: 'polynomial',
+                    color:  'rgba(223, 83, 83, .9)'
+                },
+                name: 'Male',
+                color: 'rgba(0, 0, 0, 1)',
+                data: [<?php echo join($data, ',') ?>]
+
+        },true);
+        });
+//    $('#button4').click(function() {
+ //       var chart = $('#container').highcharts();
+ //       for(var i=0;i<10;i++){
+ //           var data = [1+i,20+i];
+ //           chart.addSeries({
+ //                   data: data
+ //          });
+ //       }
+ //   });
+
+    });
+    </script>
+      <script>
+
+        $(function(){
+
+            var data = [<?php echo join($data, ',') ?> ];
+
+            // do the regression (polynomial to the third degree)
+//            var myRegression = regression('polynomial', data);
+ //           $('h3').text(myRegression.string);
+
+  //          var myRegression = regression('exponential', data );
+   //         $('h4').text(myRegression.string);
+        //    var myRegression = regressionL('linear', data);
+         //   $('h5').text(myRegression.string);
+    ////        var myRegression = regression('logarithmic', data);
+      //      $('h6').text(myRegression.string);
+        });
+        </script>
+  </head>
+  <body>
+    <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto">
+</div>
+            <h2></h2>
+            <h3></h3>
+<h4></h4>
+            <h5></h5>
+            <h6></h6>
+<button id="button" class="autocompare">Add series</button>
+<button id="button2" class="autocompare">Add series2</button>
+<button id="button3" class="autocompare">Add series3</button>
+<button id="button4" class="autocompare">Add series4</button>
+<button id="button5" class="autocompare">Add series5</button>
+  </body>
+</html>

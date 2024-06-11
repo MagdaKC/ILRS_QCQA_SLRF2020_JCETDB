@@ -1,0 +1,510 @@
+<title>WEEKLY EVALUATION AND MONITORING OF ILRS AWG PRODUCTS</title>
+ <LINK REL="SHORTCUT ICON" HREF="JCET.ico">
+  <link rel="stylesheet" href="css/butt.css" type="text/css" />
+    <script>
+	  function open_win()
+{
+	    window.open("configuration_WD.php", "_blank", "width=500px,height=600px");
+}
+</script>
+  <script>
+    function open_winH()
+{
+	    window.open("http://geodesy.jcet.umbc.edu/ILRS_AWG_MONITORING/", "_blank");
+}
+</script>
+<?php
+$downloadlink="download.php?";
+$combination_center = $_POST[combination_center];
+$analysis_center = $_POST[analysis_center];
+$PLOTS2= $_POST[PLOTS2];
+$start_date=$_POST['start_date'];
+$end_date=$_POST['end_date'];
+$station_name=$_POST['station_name'];
+$y_min=$_POST['y_min'];
+$y_max=$_POST['y_max'];
+$var0=$_POST['var0'];
+$var1=$_POST['var1'];
+$var2=$_POST['var2'];
+$var2=$_POST['var3'];
+$color0=$_POST['color0'];
+$color1=$_POST['color1'];
+$color2=$_POST['color2'];
+
+$marktype0=$_POST['marktype0'];
+$marktype1=$_POST['marktype1'];
+$marktype2=$_POST['marktype2'];
+$sch_sci_info=$_POST['var3'];
+//echo $sch_sci_info.'<br/><br/>';
+
+if ($_POST[var3]=="yes")
+{ $split = preg_split('/ +/', $station_name);
+    $station_number = $split[0];
+    $station_numberA = $station_number.'A';
+    $station_numberB = $station_number.'B';
+    $station_numberC = $station_number.'C';
+    $station_numberADH = $station_number.'ADH';
+    $station_numberBDH = $station_number.'BDH';
+    $station_numberCDH = $station_number.'CDH';
+	    $station_numberADD = $station_number.'ADD';
+		    $station_numberBDD = $station_number.'BDD';
+			    $station_numberCDD = $station_number.'CDD';
+//  echo $sch_sci_info.'<br/><br/>';
+//  echo $station_numberA.'<br/><br/>';
+//  echo $station_numberB.'<br/><br/>';
+//  echo $station_numberC.'<br/><br/>';
+}
+
+//echo $combination_center.'<br/><br/>';
+//echo $color0.'<br/><br/>';
+//echo $color1.'<br/><br/>';
+//echo $color2.'<br/><br/>';
+//echo $analysis_center.'<br/><br/>';
+//echo $marktype0.'<br/><br/>';
+//echo $marktype1.'<br/><br/>';
+//echo $marktype2.'<br/><br/>';
+//echo $start_date.'<br/><br/>';
+//echo $end_date.'<br/><br/>';
+//echo $station_name.'<br/><br/>';
+//echo "A".$PLOTS2."B";
+//echo $y_min.'<br/><br/>';
+//echo $y_max.'<br/><br/>';
+//echo $var0.'<br/><br/>';
+//echo $var1.'<br/><br/>';
+//echo $var2.'<br/><br/>';
+//echo $color.'<br/><br/>';
+//echo $color_template.'<br/><br/>';
+//echo AA.$station_name.'<br/><br/>';
+//echo AA.$PLOTS1.'<br/><br/>';
+    if ($_POST['start_date']=="" or $_POST['end_date']=="" or $_POST['station_name']=="")
+        { $tmp="";
+            foreach ( $_POST as $ind=>$val )
+            if($val == "" || !isset($val)) {
+if ($ind=="start_date" )
+{ echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>Please select the start  time from the sidebar</font>".'<br/><br/>';}
+if ($ind=="end_date")
+{ echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>Please select the end time from the sidebar</font>".'<br/><br/>';}
+ } else
+            {
+            $graphlink= $graphlink.$tmp.$ind."=".$val;
+           $graphlink1= $graphlink1.$tmp.$ind."=".$val;
+              $tmp="&";
+              }}
+
+
+
+elseif ($_POST['PLOTS1']=="COS2")
+{ $ANSWER="Please select the parameters from the sidebar";
+	        echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$ANSWER</font>".'<br/><br/>'; }
+
+
+			    else{
+
+//The PLOT 1 works with conditions
+if ($_POST[PLOTS2]=="number_of_stations" or $_POST[PLOTS2]=="obs" or  $_POST[PLOTS2]=="unk" or  $_POST[PLOTS2]=="wssoc" or  $_POST[PLOTS2]=="vf"  or $_POST[PLOTS2]=="drwrms" )
+{if ($_POST[analysis_center]!="com")
+{ include "data_plot1N_D_T.php"; }
+else
+{ $answer="NO INFORMATION AVAILABLE IN DATA BASE";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$answer </font>".'<br/><br/>'; }}
+
+if ($_POST[PLOTS2]==" " and $_POST[PLOTS2]==" " and  $_POST[PLOTS2]==" " and  $_POST[PLOTS2]==" " and  $_POST[PLOTS2]==" "   )
+{ $answer="Please select the parameters from the sidebar.";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$answer </font>".'<br/><br/>'; }
+
+
+//THe plot 3 work with conditions
+if ($_POST[PLOTS2]=="XYZ"  or $_POST[PLOTS2]=="eop" or $_POST[PLOTS2]=="eopmean" or $_POST[PLOTS2]=="eopSTD" or $_POST[PLOTS2]=="NEU"  )
+{
+if($_POST['var0']=="" and $_POST['var1']=="" and $_POST['var2']=="")
+{
+$ANSWER="Please select the parameters from the sidebar.";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$ANSWER</font>".'<br/><br/>';
+}
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="yes" and $_POST['var2']=="yes")
+{
+if ($_POST['station_name']=="None")
+{
+$ANSWER="Please select a station for analysis";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$ANSWER</font>".'<br/><br/>';
+}
+else
+{
+include"data_plot4N_D_A_T.php";
+include"$station_numberA";
+include"$station_numberADH";
+include"$station_numberADD";
+include"data_plot4N_D_B.php";
+include"$station_numberB";
+include"$station_numberBDH";
+include"$station_numberBDD";
+include"data_plot4N_D_C.php";
+include"$station_numberC";
+include"$station_numberCDH";
+include"$station_numberCDD";
+include"data_plot4N_D_D.php";
+}}
+
+
+
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="yes" and $_POST['var2']=="")
+{
+if ($_POST['station_name']=="None")
+{
+$ANSWER="Please select a station for analysis";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$ANSWER</font>".'<br/><br/>';
+}
+else
+{
+     include "data_plot4N_D_A_T.php";
+     include "$station_numberA";
+     include "$station_numberADH";
+     include "$station_numberADD";
+     include "data_plot4N_D_B.php";
+     include "$station_numberB";
+     include "$station_numberBDH";
+     include "$station_numberBDD";
+     include "data_plot4N_D_C2.php";
+     //include "$station_numberC";
+     //include "$station_numberCDH";
+     //include "$station_numberCDD";
+     include "data_plot4N_D_D2.php";
+}}
+
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="" and $_POST['var2']=="yes")
+{
+if ($_POST['station_name']=="None")
+{
+$ANSWER="Please select a station for analysis";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$ANSWER</font>".'<br/><br/>';
+}
+else
+{
+//include "data_plot3.php";
+//include "data_plot3N.php";
+     include "data_plot4N_D_A_T.php";
+     include "$station_numberA";
+     include "$station_numberADH";
+     include "$station_numberADD";
+     include "data_plot4N_D_B3.php";
+     include "data_plot4N_D_C3.php";
+     include "$station_numberC";
+     include "$station_numberCDH";
+     include "$station_numberCDD";
+     include "data_plot4N_D_D3.php";
+}}
+
+elseif ($_POST['var0']=="" and $_POST['var1']=="yes" and $_POST['var2']=="yes")
+{
+if ($_POST['station_name']=="None")
+{
+$ANSWER="Please select a station for analysis";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$ANSWER</font>".'<br/><br/>';
+}
+else
+{
+     include "data_plot4N_D_A4_T.php";
+     include "data_plot4N_D_B4.php";
+     include "$station_numberB";
+     include "$station_numberBDH";
+     include "$station_numberBDD";
+     include "data_plot4N_D_C4.php";
+     include "$station_numberC";
+     include "$station_numberCDH";
+     include "$station_numberCDD";
+     include "data_plot4N_D_D4.php";
+}}
+
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="" and $_POST['var2']=="")
+{
+if ($_POST['station_name']=="None")
+{
+$ANSWER="Please select a station for analysis";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$ANSWER</font>".'<br/><br/>';
+}
+else
+{
+     include "data_plot4N_D_A_T.php";
+     include "$station_numberA";
+     include "$station_numberADH";
+     include "$station_numberADD";
+     include "data_plot4N_D_B5.php";
+     include "data_plot4N_D_D5.php";
+}}
+
+elseif ($_POST['var0']=="" and $_POST['var1']=="yes" and $_POST['var2']=="")
+{
+if ($_POST['station_name']=="None")
+{
+$ANSWER="Please select a station for analysis";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$ANSWER</font>".'<br/><br/>';
+}
+else
+{
+     include "data_plot4N_D_A6_T.php";
+     include "data_plot4N_D_B6.php";
+     include "$station_numberB";
+     include "$station_numberBDH";
+     include "$station_numberBDD";
+     include "data_plot4N_D_C6.php";
+     include "data_plot4N_D_D6.php";
+}}
+
+elseif ($_POST['var0']=="" and $_POST['var1']=="" and $_POST['var2']=="yes")
+{
+if ($_POST['station_name']=="None")
+{
+$ANSWER="Please select a station for analysis";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$ANSWER</font>".'<br/><br/>';
+}
+else
+{
+     include "data_plot4N_D_A7_T.php";
+     include "data_plot4N_D_C7.php";
+     include "$station_numberC";
+     include "$station_numberCDH";
+     include "$station_numberCDD";
+     include "data_plot4N_D_D7.php";
+}}
+
+
+
+
+}
+ 
+//THe plot 3 work with conditions TXYZ
+if ( $_POST[PLOTS2]=="Txyz"  )
+{
+if($_POST['var0']=="" and $_POST['var1']=="" and $_POST['var2']=="")
+{
+$ANSWER="Please select the parameters from the sidebar.";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$ANSWER</font>".'<br/><br/>';
+}
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="yes" and $_POST['var2']=="yes")
+{
+//include "data_plot3.php";
+//	echo "data_plot3.php";
+include "data_plot3N_D_T.php";
+}
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="yes" and $_POST['var2']=="")
+{
+	//include "data_plot3.php";
+	include "data_plot3N2_D_T.php";
+}
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="" and $_POST['var2']=="yes")
+{
+	    //include "data_plot3.php";
+	    include "data_plot3N3_D_T.php";
+}
+elseif ($_POST['var0']=="" and $_POST['var1']=="yes" and $_POST['var2']=="yes")
+{
+	        //include "data_plot3.php";
+	        include "data_plot3N4_D_T.php";
+}
+
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="" and $_POST['var2']=="")
+{
+	        //include "data_plot3.php";
+	        include "data_plot3N5_D_T.php";
+}
+
+elseif ($_POST['var0']=="" and $_POST['var1']=="yes" and $_POST['var2']=="")
+{
+	        //include "data_plot3.php";
+	        include "data_plot3N6_D_T.php";
+}
+
+elseif ($_POST['var0']=="" and $_POST['var1']=="" and $_POST['var2']=="yes")
+{
+	        //include "data_plot3.php";
+	        include "data_plot3N7_D_T.php";
+}
+
+
+
+}
+//echo $_POST[PLOTS2]=="Rxyz";
+//THe plot 3 work with conditions RXYZ
+if ($_POST[PLOTS2]=="Rxyz" and $_POST[combination_center]=="ilrsa")
+{
+if($_POST['var0']=="" and $_POST['var1']=="" and $_POST['var2']=="")
+{
+$ANSWER="Please select the parameters from the sidebar.";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$ANSWER</font>".'<br/><br/>';
+}
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="yes" and $_POST['var2']=="yes")
+{
+//include "data_plot3.php";
+include "data_plot3N_D_T.php";
+}
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="yes" and $_POST['var2']=="")
+{
+	//include "data_plot3.php";
+	include "data_plot3N2_D_T.php";
+}
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="" and $_POST['var2']=="yes")
+{
+	    //include "data_plot3.php";
+	    include "data_plot3N3_D_T.php";
+}
+elseif ($_POST['var0']=="" and $_POST['var1']=="yes" and $_POST['var2']=="yes")
+{
+	        //include "data_plot3.php";
+	        include "data_plot3N4_D_T.php";
+}
+
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="" and $_POST['var2']=="")
+{
+	        //include "data_plot3.php";
+	        include "data_plot3N5_D_T.php";
+}
+
+elseif ($_POST['var0']=="" and $_POST['var1']=="yes" and $_POST['var2']=="")
+{
+	        //include "data_plot3.php";
+	        include "data_plot3N6_D_T.php";
+}
+
+elseif ($_POST['var0']=="" and $_POST['var1']=="" and $_POST['var2']=="yes")
+{
+	        //include "data_plot3.php";
+	        include "data_plot3N7_D_T.php";
+}
+
+
+}
+
+if ($_POST[PLOTS2]=="Rxyz" and $_POST[combination_center]=="ilrsb")
+{
+$ANSWER="NO INFORMATION AVAILABLE IN DATA BASE";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$ANSWER</font>".'<br/><br/>';
+}
+
+if ($_POST[PLOTS2]=="Helmert_Rxyz_COM" and $_POST[combination_center]=="ilrsb")
+{
+	$ANSWER="NO INFORMATION AVAILABLE IN DATA BASE";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$ANSWER</font>".'<br/><br/>';
+}
+
+//ILRSA
+if ( $_POST[PLOTS2]=="Helmert_Txyz_COM"  )
+{if ($_POST[analysis_center]=="com")
+{ $answer="NO INFORMATION AVAILABLE IN DATA BASE";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$answer </font>".'<br/><br/>';}
+elseif ($_POST['var0']=="" and $_POST['var1']=="" and $_POST['var2']=="")
+{
+$ANSWER="Please select the parameters from the sidebar.";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$ANSWER</font>".'<br/><br/>';
+}
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="yes" and $_POST['var2']=="yes")
+{
+//include "data_plot3.php";
+include "data_plot3N_D.php";
+}
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="yes" and $_POST['var2']=="")
+{
+	//include "data_plot3.php";
+	include "data_plot3N2_D_T.php";
+}
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="" and $_POST['var2']=="yes")
+{
+	    //include "data_plot3.php";
+	    include "data_plot3N3_D_T.php";
+}
+elseif ($_POST['var0']=="" and $_POST['var1']=="yes" and $_POST['var2']=="yes")
+{
+	        //include "data_plot3.php";
+	        include "data_plot3N4_D_T.php";
+}
+
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="" and $_POST['var2']=="")
+{
+	        //include "data_plot3.php";
+	        include "data_plot3N5_D_T.php";
+}
+
+elseif ($_POST['var0']=="" and $_POST['var1']=="yes" and $_POST['var2']=="")
+{
+	        //include "data_plot3.php";
+	        include "data_plot3N6_D_T.php";
+}
+
+elseif ($_POST['var0']=="" and $_POST['var1']=="" and $_POST['var2']=="yes")
+{
+	        //include "data_plot3.php";
+	        include "data_plot3N7_D_T.php";
+}
+
+
+}
+
+if (  $_POST[PLOTS2]=="Helmert_Rxyz_COM" and $_POST[combination_center]=="ilrsa" )
+{if ($_POST[analysis_center]=="com")
+{
+	$answer="NO INFORMATION AVAILABLE IN DATA BASE";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$answer </font>".'<br/><br/>';}
+elseif ($_POST['var0']=="" and $_POST['var1']=="" and $_POST['var2']=="")
+{
+$ANSWER="Please select the parameters from the sidebar.";
+echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$ANSWER</font>".'<br/><br/>';
+}
+
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="yes" and $_POST['var2']=="yes")
+{
+//include "data_plot3.php";
+include "data_plot3N_D_T.php";
+}
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="yes" and $_POST['var2']=="")
+{
+	//include "data_plot3.php";
+	include "data_plot3N2_D_T.php";
+}
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="" and $_POST['var2']=="yes")
+{
+	    //include "data_plot3.php";
+	    include "data_plot3N3_D_T.php";
+}
+elseif ($_POST['var0']=="" and $_POST['var1']=="yes" and $_POST['var2']=="yes")
+{
+	        //include "data_plot3.php";
+	        include "data_plot3N4_D_T.php";
+}
+
+elseif ($_POST['var0']=="yes" and $_POST['var1']=="" and $_POST['var2']=="")
+{
+	        //include "data_plot3.php";
+	        include "data_plot3N5_D_T.php";
+}
+
+elseif ($_POST['var0']=="" and $_POST['var1']=="yes" and $_POST['var2']=="")
+{
+	        //include "data_plot3.php";
+	        include "data_plot3N6_D_T.php";
+}
+
+elseif ($_POST['var0']=="" and $_POST['var1']=="" and $_POST['var2']=="yes")
+{
+	        //include "data_plot3.php";
+	        include "data_plot3N7_D_T.php";
+}
+}
+
+
+
+if ($_POST[PLOTS2]=="Scale" or $_POST[PLOTS2]=="GRMS" or  $_POST[PLOTS2]=="CRMS")
+{ include "data_plot5N_D_T.php";
+}
+
+ if( $_POST[PLOTS2]=="Scale_COM" )
+{
+		if ($_POST[analysis_center]!="com" )
+//{
+//	$answer="NO INFORMATION AVAILABLE IN DATA BASE";
+//echo "<br><br><br><br><br><br><br><br><br><center><font color='red' size='24'>$answer </font>".'<br/><br/>';}
+//elseiif
+        { include "data_plot5N_D_T.php";
+		}
+}
+}
+?>
+

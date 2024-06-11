@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js'></script>
+<script src="highcharts-regression.js"> </script>
+<script type='text/javascript'>
+$(function () {<!--   w  w  w . j  av  a2 s . c om-->
+    $('#container').highcharts({
+        chart: {
+            events: {
+                addSeries: function () {
+                    var label = this.renderer.label('A series was added, about to redraw chart', 100, 120)
+                        .attr({
+                            fill: Highcharts.getOptions().colors[0],
+                            padding: 10,
+                            r: 5,
+                            zIndex: 8
+                        })
+                        .css({
+                            color: '#FFFFFF'
+                        })
+                        .add();
+
+                    setTimeout(function () {
+                        label.fadeOut();
+                    }, 1000);
+                }
+            }
+        },
+
+        xAxis: {
+        },
+
+        series: [{ 
+regression: true ,
+                regressionSettings: {
+                    type: 'linear',
+                    color:  'rgba(223, 83, 83, .9)'
+                },
+            data: [ [176.5, 71.8], [164.4, 55.5], [160.7, 48.6], [174.0, 66.4], [163.8, 67.3]]
+        }]
+    });
+    $('#button').click(function () {
+        var chart = $('#container').highcharts();
+        chart.addSeries({
+regression: true ,
+                regressionSettings: {
+                    type: 'linear',
+                    color:  'rgba(223, 83, 83, .9)'
+                },
+            data:[[167.6, 64.5], [167.6, 72.3], [167.6, 61.4], [154.9, 58.2], [162.6, 81.8]]
+        });
+    });
+});
+</script>
+</head>
+<body>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<div id="container" style="height: 400px"></div>
+<button id="button" class="autocompare">Add series</button>
+</body>
+</html>

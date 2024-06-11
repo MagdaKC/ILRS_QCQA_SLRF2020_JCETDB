@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>
+      Chart
+    </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="http://code.jquery.com/jquery-1.9.1.js" type="text/javascript"></script>
+<script src="http://code.highcharts.com/stock/highstock.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js" type="text/javascript"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js" type="text/javascript"></script>
+<script src="//rawgithub.com/phpepe/highcharts-regression/master/highcharts-regression.js"> </script>
+
+    <script type="text/javascript">
+$(function() {
+    var startdate = (new Date()).getTime();
+    var chart = new Highcharts.StockChart({
+        
+        chart: { renderTo: 'container' },
+        scrollbar: { enabled: true },
+        navigator: { enabled: true },
+        rangeSelector: { selected: 1 },
+        series: [{ id: 0, name: 'A', data : (function() { // generate an array of random data var data = [], time = startdate, i; for( i = -15; i <= 0; i++) { data.push([ time + i * 1000, Math.round(Math.random() * 100) ]);
+                } return data; })() }]
+    });
+    
+    $('#button').click(function() {
+        chart.addSeries({
+            id: 1,
+            name: 'B',
+            data : (function() {
+                // generate an array of random data
+                var data = [], time =startdate, i;
+
+                for( i = -15; i <= 0; i++) {
+                    data.push([
+                        time + i * 1000,
+                        Math.round(Math.random() * 100)
+                    ]);
+                }
+                return data;
+            })()
+        });
+        $('#button')[0].disabled = true;
+    });
+    
+    $('#run').click(function() {
+        setInterval(function() { 
+           var x = (new Date()).getTime(), // current time
+               y = Math.round(Math.random() * 100);
+           chart.series[0].addPoint([x, y], false, true);                
+           chart.series[1].addPoint([x, y], false, true);              
+           chart.redraw();
+        }, 1000);                
+    });
+});
+    </script>
+  </head>
+  <body>
+    <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+<button id="button" class="autocompare">Add plot line</button>
+  </body>
+</html>

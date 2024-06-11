@@ -1,0 +1,403 @@
+      
+      var groups=10;  
+      var flag = 0;
+      var group=new Array(10);
+      
+      
+      
+
+      
+      function initialize_variables_a() {
+    
+        groups=document.isc.PLOTS1.options.length
+      
+        group=new Array(groups)
+    
+        for (i=0; i<groups; i++) {
+              group[i]=new Array()
+              //additional_data[i] = Array();
+        }
+            
+        
+        
+        group[0][0]=new Option("---Select---"," ");
+        group[1][0]=new Option("Choose quantity"," ");
+        group[1][1]=new Option("WEEKLY NUMBER OF STATIONS","number_of_stations");
+        group[1][2]=new Option("WEEKLY NUMBER OF OBSERVATIONS","obs");
+        group[1][3]=new Option("WEEKLY NUMBER OF PARAMETERS","unk");
+        group[1][4]=new Option("WEEKLY SUM OF SQUARED WEIGHTED MISCLOSURES ", "wssoc");
+        group[1][5]=new Option("VARIANCE FACTOR", "vf");
+        
+        
+ 
+        group[2][0]=new Option("Under Construction"," ");
+  
+        group[3][0]=new Option("Choose quantity"," ");
+        group[3][1]=new Option("X-Y-Z OFFSETS","XYZ");
+        group[3][2]=new Option("N-E-U OFFSETS ","NEU");
+        group[3][3]=new Option("3-D WRMS ","drwrms");
+
+        group[4][0]=new Option("Choose quantity"," ");
+        group[4][1]=new Option("ORIGIN OFFSETS w.r.t SLRF2008","Txyz");
+        group[4][2]=new Option("SCALE w.r.t SLRF2008","Scale");
+        group[4][3]=new Option("EULER ROTATIONS w.r.t SLRF2008", "Rxyz");
+        group[4][4]=new Option("GLOBAL WRMS w.r.t. SLRF2008", "GRMS");
+        group[4][5]=new Option("CORE WRMS w.r.t. SLRF2008","CRMS");
+        group[4][6]=new Option("ORIGIN OFFSETS w.r.t COMBINED SOLUTION","Helmert_Txyz_COM");
+        group[4][7]=new Option("SCALE w.r.t COMBINED SOLUTION","Scale_COM");
+        group[4][8]=new Option("EULER ROTATIONS w.r.t COMBINED SOLUTION", "Helmert_Rxyz_COM");
+
+        group[5][0]=new Option("Choose quantity"," ");
+        group[5][1]=new Option("DAILY EOP RESIDUALS","eop");
+        group[5][2]=new Option("WEEKLY EOP WEIGHTED MEAN","eopmean");
+        group[5][3]=new Option("WEEKLY STANDARD DEVIATION","eopSTD");
+  
+      }
+
+    function redirect_a(x)
+    {
+        var temp=document.isc.PLOTS2;
+        initialize_variables_a();
+        
+        for (m=temp.options.length-1;m>0;m--)
+            temp.options[m]=null
+        
+        for (i=0;i<group[x].length;i++)
+        {
+            temp.options[i]=new Option(group[x][i].text,group[x][i].value)
+        }
+        temp.options[0].selected=true;
+        //redirect_b(0)
+        
+        
+    }
+    
+
+
+    
+    var secondGroups = 10;  // Just initializing, no use of of this at all  
+    var secondGroup = new Array(10);
+    
+    function initialize_variable_b()
+    {
+        secondGroups  = 2 // Either, we have station or we dont have it.
+        secondGroup   = new Array(secondGroups)
+        
+        
+    
+        for (i=0; i<secondGroups; i++)
+            secondGroup[i]=new Array()
+        
+            secondGroup[0][1]=new Option("N/A"," ");
+            
+            //secondGroup[1][1]=new  Option( "Choose station", "")
+            secondGroup[1][1]=new  Option( "Choose station", "None")
+            secondGroup[1][2]=new  Option( "1824  Golosiiv", "1824  Golosiiv")
+            secondGroup[1][3]=new  Option( "1831  Lviv", "1831  Lviv")
+            secondGroup[1][4]=new  Option( "1863  Maidanak2", "1863 Maidanak2")
+            secondGroup[1][5]=new  Option( "1864  Maidanak1", "1864 Maidanak1")
+            secondGroup[1][6]=new  Option( "1868  Komsomolsk-n", "1868 Komsomolsk-n")
+            secondGroup[1][7]=new  Option( "1870  Mendeleevo1", "1870 Mendeleevo1")
+            secondGroup[1][8]=new  Option( "1873  Simeiz", "1873 Simeiz")
+            secondGroup[1][9]=new  Option( "1874  Mendeleevo2", "1874 Mendeleevo2")
+secondGroup[1][10]=new  Option( "1879  Altay", "1879 Altay")
+    secondGroup[1][11]=new  Option( "1884  Riga", "1884 Riga")
+    secondGroup[1][12]=new  Option( "1887  Baikonur", "1887 Baikonur")
+    secondGroup[1][13]=new  Option( "1888  Svetloe", "1888 Svetloe")
+    secondGroup[1][14]=new  Option( "1889  Zelenchuks", "1889 Zelenchuks")
+    secondGroup[1][15]=new  Option( "1890  Badary", "1890 Badary")
+    secondGroup[1][16]=new  Option( "1893  Katzively", "1893 Katzively")
+ secondGroup[1][17]=new  Option( "7040  Wrightwood", "7040 Wrightwood")
+    secondGroup[1][18]=new  Option( "7080  McDonald-Obs", "7080 McDonald-Obs")
+    secondGroup[1][19]=new  Option( "7090  Yarragadee", "7090 Yarragadee")
+    secondGroup[1][20]=new  Option( "7105  Greenbelt", "7105 Greenbelt")
+    secondGroup[1][21]=new  Option( "7110  Monument-Pea", "7110 Monument-Pea")
+    secondGroup[1][22]=new  Option( "7119  Haleakala", "7119 Haleakala")
+    secondGroup[1][23]=new  Option( "7124  Tahiti", "7124 Tahiti")
+    secondGroup[1][24]=new  Option( "7210  Haleakala", "7210 Haleakala")
+    secondGroup[1][25]=new  Option( "7231  Wuhan", "7231 Wuhan")
+    secondGroup[1][26]=new  Option( "7236  Wuhan", "7236 Wuhan")
+    secondGroup[1][27]=new  Option( "7237  Changchun", "7237 Changchun")
+    secondGroup[1][28]=new  Option( "7249  Beijing", "7249 Beijing")
+    secondGroup[1][29]=new  Option( "7308  Koganei", "7308 Koganei")
+    secondGroup[1][30]=new  Option( "7328  Koganei", "7328 Koganei")
+    secondGroup[1][31]=new  Option( "7335  Kashima", "7335 Kashima")
+    secondGroup[1][32]=new  Option( "7337  Miura", "7337 Miura")
+    secondGroup[1][33]=new  Option( "7339  Tateyama", "7339 Tateyama")
+    secondGroup[1][34]=new  Option( "7343  Beiji", "7343 Beiji")
+    secondGroup[1][35]=new  Option( "7355  Urumqi", "7335 Urumqi")
+    secondGroup[1][36]=new  Option( "7356  Lhasa", "7356 Lhasa")
+    secondGroup[1][37]=new  Option( "7357  Beijing-A", "7357 Beijing-A")
+    secondGroup[1][38]=new  Option( "7358  Tanegashima", "7358 Tanegashima")
+    secondGroup[1][39]=new  Option( "7370  Burnie", "7370 Burnie")
+    secondGroup[1][40]=new  Option( "7403  Arequipa", "7403 Arequipa")
+    secondGroup[1][41]=new  Option( "7405  Concepcion", "7405 Concepcion")
+    secondGroup[1][42]=new  Option( "7406  San Juan", "7406 San Juan")
+    secondGroup[1][43]=new  Option( "7501  Hartebeestho", "7501 Hartebeestho")
+    secondGroup[1][44]=new  Option( "7548  Cagliari", "7548 Cagliari")
+    secondGroup[1][45]=new  Option( "7549  TIGO", "7549 TIGO")
+    secondGroup[1][46]=new  Option( "7604  Brest", "7604 Brest")
+    secondGroup[1][47]=new  Option( "7806  Metsahovi", "7806 Metsahovi")
+    secondGroup[1][48]=new  Option( "7810  Zimmerwald", "7810 Zimmerwald")
+    secondGroup[1][49]=new  Option( "7811  Borowiec", "7811 Borowiec")
+   secondGroup[1][50]=new  Option( "7820  Kunming", "7820 Kunming")
+    secondGroup[1][51]=new  Option( "7821  Shanghai", "7821 Shanghai")
+    secondGroup[1][52]=new  Option( "7822  Papeete", "7822 Papeete")
+    secondGroup[1][53]=new  Option( "7823  San-Fernand", "7823 San-Fernand")
+    secondGroup[1][54]=new  Option( "7824  San-Fernand", "7824 San-Fernand")
+    secondGroup[1][55]=new  Option( "7825  Mt-Stromlo", "7825 Mt-Stromlo")
+    secondGroup[1][56]=new  Option( "7826  Mt-Stromlo", "7826 Mt-Stromlo")
+    secondGroup[1][57]=new  Option( "7830  Chania", "7830 Chania")
+    secondGroup[1][58]=new  Option( "7831  Helwan", "7831 Helwan")
+    secondGroup[1][59]=new  Option( "7832  Riyadh", "7832 Riyadh")
+    secondGroup[1][60]=new  Option( "7835  Grasse", "7835 Grasse")
+    secondGroup[1][61]=new  Option( "7836  Potsdam", "7836 Potsdam")
+    secondGroup[1][62]=new  Option( "7837  Shanghai", "7837 Shanghai")
+    secondGroup[1][63]=new  Option( "7838  Simosato", "7838 Simosato")
+    secondGroup[1][64]=new  Option( "7839  Graz", "7839 Graz")
+    secondGroup[1][65]=new  Option( "7840  Herstmonceux", "7840 Herstmonceux")
+    secondGroup[1][66]=new  Option( "7841  Potsdam", "7841 Potsdam")
+    secondGroup[1][67]=new  Option( "7843  Orroral" , "7843 Orroral")
+    secondGroup[1][68]=new  Option( "7845  Grasse", "7845 Grasse")
+    secondGroup[1][69]=new  Option( "7846  Grasse", "7846 Grasse")
+    secondGroup[1][70]=new  Option( "7848  Ajaccio", "7848 Ajaccio")
+    secondGroup[1][71]=new  Option( "7849  Mt.Stromlo", "7849 Mt.Stromlo")
+    secondGroup[1][72]=new  Option( "7864  Stafford", "7864 Stafford")
+    secondGroup[1][73]=new  Option( "7865  Stafford", "7865 Stafford")
+    secondGroup[1][74]=new  Option( "7918  Greenbelt" , "7918 Greenbelt")
+    secondGroup[1][75]=new  Option( "7939  Matera", "7939 Matera")
+    secondGroup[1][76]=new  Option( "7941  Matera", "7941 Matera")
+    secondGroup[1][77]=new  Option( "8834  Wettzell", "8834 Wettzell")
+            
+    }
+    
+    
+    function redirect_b(y)
+    {
+        
+        
+        var temp=document.isc.station_name;
+        
+        initialize_variable_b();
+        
+        for (m=temp.options.length-1;m>=0;m--)
+          temp.options[m]=null
+        
+        selected_index=0;
+        if(document.isc.PLOTS1.options.selectedIndex==3){
+          selected_index=1;
+        }
+        
+        //alert(secondGroup[selected_index].length);               
+        for (i=1;i<secondGroup[selected_index].length;i++)
+        {
+            temp.options[i-1]=new Option(secondGroup[selected_index][i].text,secondGroup[selected_index][i].value)
+        }
+        temp.options[0].selected=true
+        
+        var plot_name = document.isc.PLOTS2.value;
+        //alert(plot_name);
+        if(flag==1) {
+          removeElement();
+        }
+        addElement(plot_name);
+        flag = 1;
+        
+    }
+    
+    function removeElement(divNum) {
+      var TabPlane = document.getElementById("myDivleft");
+      var newPlane = TabPlane.cloneNode(false); // no child nodes;
+      TabPlane.parentNode.replaceChild(newPlane,TabPlane);
+      
+      var TabPlane = document.getElementById("myDivright");
+      var newPlane = TabPlane.cloneNode(false); // no child nodes;
+      TabPlane.parentNode.replaceChild(newPlane,TabPlane);
+    }
+    
+    var additional_data_left= new Array();
+    
+    additional_data_left["XYZ"] = new Array();
+    additional_data_left["XYZ"][0]= "<input type=\"checkbox\"  name=\"var0\" class=\"other\" value=\"yes\" /><label class=\"left\">X</label>";
+    additional_data_left["XYZ"][1]= "<input type=\"checkbox\"  name=\"var1\" class=\"other\" value=\"yes\" /><label class=\"left\">Y</label>";
+    additional_data_left["XYZ"][2]= "<input type=\"checkbox\"  name=\"var2\" class=\"other\" value=\"yes\" /><label class=\"left\">Z</label>";
+
+    
+    
+    additional_data_left["NEU"] = new Array();
+    additional_data_left["NEU"][0]= "<input type=\"checkbox\"  name=\"var0\" class=\"other\" value=\"yes\" /><label class=\"left\">N</label>";
+    additional_data_left["NEU"][1]= "<input type=\"checkbox\"  name=\"var1\" class=\"other\" value=\"yes\" /><label class=\"left\">E</label>";
+    additional_data_left["NEU"][2]= "<input type=\"checkbox\"  name=\"var2\" class=\"other\" value=\"yes\" /><label class=\"left\">U</label>";
+    
+    additional_data_left["Txyz"]= new Array();
+    additional_data_left["Txyz"][0]= "<input type=\"checkbox\"  name=\"var0\" class=\"other\" value=\"yes\" /><label class=\"left\">Tx</label>";
+    additional_data_left["Txyz"][1]= "<input type=\"checkbox\"  name=\"var1\" class=\"other\" value=\"yes\" /><label class=\"left\">Ty</label>";
+    additional_data_left["Txyz"][2]= "<input type=\"checkbox\"  name=\"var2\" class=\"other\" value=\"yes\" /><label class=\"left\">Tz</label>";
+    
+    additional_data_left["Rxyz"]= new Array();
+    additional_data_left["Rxyz"][0]= "<input type=\"checkbox\"  name=\"var0\" class=\"other\" value=\"yes\" /><label class=\"left\">Rx</label>";
+    additional_data_left["Rxyz"][1]= "<input type=\"checkbox\"  name=\"var1\" class=\"other\" value=\"yes\" /><label class=\"left\">Ry</label>";
+    additional_data_left["Rxyz"][2]= "<input type=\"checkbox\"  name=\"var2\" class=\"other\" value=\"yes\" /><label class=\"left\">Rz</label>";
+    
+    additional_data_left["Helmert_Txyz_COM"]= new Array();
+    additional_data_left["Helmert_Txyz_COM"][0]= "<input type=\"checkbox\"  name=\"var0\" class=\"other\" value=\"yes\" /><label class=\"left\">Tx</label>";
+    additional_data_left["Helmert_Txyz_COM"][1]= "<input type=\"checkbox\"  name=\"var1\" class=\"other\" value=\"yes\" /><label class=\"left\">Ty</label>";
+    additional_data_left["Helmert_Txyz_COM"][2]= "<input type=\"checkbox\"  name=\"var2\" class=\"other\" value=\"yes\" /><label class=\"left\">Tz</label>";
+    
+    additional_data_left["Helmert_Rxyz_COM"]= new Array();
+    additional_data_left["Helmert_Rxyz_COM"][0]= "<input type=\"checkbox\"  name=\"var0\" class=\"other\" value=\"yes\" /><label class=\"left\">Rx</label>";
+    additional_data_left["Helmert_Rxyz_COM"][1]= "<input type=\"checkbox\"  name=\"var1\" class=\"other\" value=\"yes\" /><label class=\"left\">Ry</label>";
+    additional_data_left["Helmert_Rxyz_COM"][2]= "<input type=\"checkbox\"  name=\"var2\" class=\"other\" value=\"yes\" /><label class=\"left\">Rz</label>";
+    
+    
+    additional_data_left["eop"] = new Array();
+    additional_data_left["eop"][0]= "<input type=\"checkbox\"  name=\"var0\" class=\"other\" value=\"yes\" /><label class=\"left\">X-pole</label>";
+    additional_data_left["eop"][1]= "<input type=\"checkbox\"  name=\"var1\" class=\"other\" value=\"yes\" /><label class=\"left\">Y-pole</label>";
+    additional_data_left["eop"][2]= "<input type=\"checkbox\"  name=\"var2\" class=\"other\" value=\"yes\" /><label class=\"left\">LOD</label>";
+    
+    
+    additional_data_left["eopmean"] = new Array();
+    additional_data_left["eopmean"][0]= "<input type=\"checkbox\"  name=\"var0\" class=\"other\" value=\"yes\" /><label class=\"left\">X-pole</label>";
+    additional_data_left["eopmean"][1]= "<input type=\"checkbox\"  name=\"var1\" class=\"other\" value=\"yes\" /><label class=\"left\">Y-pole</label>";
+    additional_data_left["eopmean"][2]= "<input type=\"checkbox\"  name=\"var2\" class=\"other\" value=\"yes\" /><label class=\"left\">LOD</label>";
+
+    additional_data_left["eopSTD"] = new Array();
+    additional_data_left["eopSTD"][0]= "<input type=\"checkbox\"  name=\"var0\" class=\"other\" value=\"yes\" /><label class=\"left\">X-pole</label>";
+    additional_data_left["eopSTD"][1]= "<input type=\"checkbox\"  name=\"var1\" class=\"other\" value=\"yes\" /><label class=\"left\">Y-pole</label>";
+    additional_data_left["eopSTD"][2]= "<input type=\"checkbox\"  name=\"var2\" class=\"other\" value=\"yes\" /><label class=\"left\">LOD</label>";
+
+    function addElement(plot_name) {
+      
+      
+      
+        
+      
+      color_template_left = "<table><tr><td class=\"left\"><label class=\"left\">Select Color:</label></td>";
+      color_template_right1 = "<select class \"right\" name=\"color";
+// Colors for markers first color Green, the second Blue and the third Red
+      color_template_right2 = "\" ><option value=\"#4AA02C\">Green</option><option value=\"#E41B17\">Red</option><option value=\"#306EFF\">Blue</option><option value=\"#893BFF\">Purple</option><option value=\"#00FFFF\">Aqua</option><option value=\"#FFFF00\">Yellow</option><option value=\"#000000\">Black</option><option value=\"#FFA500\">Orange</option></select>";
+      color_template_right3 = "\" > <option value=\"#306EFF\">Blue</option> <option value=\"#E41B17\">Red</option> <option value=\"#4AA02C\">Green</option><option value=\"#893BFF\">Purple</option><option value=\"#00FFFF\">Aqua</option><option value=\"#FFFF00\">Yellow</option><option value=\"#000000\">Black</option><option value=\"#FFA500\">Orange</option></select>";
+      color_template_right4 = "\" ><option value=\"#E41B17\">Red</option> <option value=\"#4AA02C\">Green</option><option value=\"#306EFF\">Blue</option><option value=\"#893BFF\">Purple</option><option value=\"#00FFFF\">Aqua</option><option value=\"#FFFF00\">Yellow</option><option value=\"#000000\">Black</option><option value=\"#FFA500\">Orange</option></select>";
+
+
+      
+      mark_template_left =  "<table><tr><td class=\"left\"><label class=\"left\">Select Marktype:</label></td>";
+      mark_template_right1 = "<select class \"right\" name=\"marktype";
+// Marker shape Filled square, then Filled Diamond and then Filled Circle.
+      mark_template_right2 = "\" > <option value=\"square\">Filed Square</option><option value=\"circle\">Filed Circle</option><option value=\"circle_e\">Circle</option><option value=\"square_e\">Square</option><option value=\"diamond\">Filed Diamond</option><option value=\"diamond_e\">Diamond</option><option value=\"triangle\">Filed Triangle</option><option value=\"triangle_e\">Triangle</option><option value=\"triangle-down\">Field Triangle-Down</option><option value=\"triangle-down_e\">Triangle-Down</option></select>" ;
+      mark_template_right3 = "\" ><option value=\"diamond\">Filed Diamond</option> <option value=\"square\">Filed Square</option><option value=\"circle\">Filed Circle</option><option value=\"circle_e\">Circle</option><option value=\"square_e\">Square</option> <option value=\"diamond_e\">Diamond</option><option value=\"triangle\">Filed Triangle</option><option value=\"triangle_e\">Triangle</option><option value=\"triangle-down\">Field Triangle-Down</option><option value=\"triangle-down_e\">Triangle-Down</option></select>" ;
+    mark_template_right4 = "\" ><option value=\"circle\">Filed Circle</option><option value=\"circle_e\">Circle</option> <option value=\"square\">Filed Square</option><option value=\"square_e\">Square</option><option value=\"diamond\">Filed Diamond</option><option value=\"diamond_e\">Diamond</option><option value=\"triangle\">Filed Triangle</option><option value=\"triangle_e\">Triangle</option><option value=\"triangle-down\">Field Triangle-Down</option><option value=\"triangle-down_e\">Triangle-Down</option></select>" ;
+      
+      
+      //alert(1);   
+      
+      var position_of_color = 'myDivleft';
+      
+      if(typeof(additional_data_left[plot_name])!="undefined"){
+          
+          //alert(plot_name+" : " + additional_data_left[plot_name].length);
+          
+          //for(i=0; i<additional_data_left[plot_name].length; i++) {
+          for(i=0; i<1; i++) {
+              var ni = document.getElementById('myDivleft');
+              var num = 1;
+              var newdiv = document.createElement('div');
+              var divIdName = 'my'+num+'Div';
+              newdiv.setAttribute('id',divIdName);
+              newdiv.innerHTML = additional_data_left[plot_name][i];
+              ni.appendChild(newdiv);
+              position_of_color = 'myDivright';
+              
+              var ni = document.getElementById('myDivright');
+              var num = 1;
+              var newdiv = document.createElement('div');
+              var divIdName = 'my'+num+'Div';
+              newdiv.setAttribute('id',divIdName);
+              newdiv.innerHTML = color_template_right1 + i + color_template_right2 + "&nbsp;&nbsp;" + mark_template_right1 + i + mark_template_right2;
+              ni.appendChild(newdiv);
+          //alert(newdiv.innerHTML+" : " );
+          }
+           
+          for(i=1; i<2; i++) {
+              var ni = document.getElementById('myDivleft');
+              var num = 1;
+              var newdiv = document.createElement('div');
+              var divIdName = 'my'+num+'Div';
+              newdiv.setAttribute('id',divIdName);
+              newdiv.innerHTML = additional_data_left[plot_name][i];
+              ni.appendChild(newdiv);
+              position_of_color = 'myDivright';
+              
+              var ni = document.getElementById('myDivright');
+              var num = 1;
+              var newdiv = document.createElement('div');
+              var divIdName = 'my'+num+'Div';
+              newdiv.setAttribute('id',divIdName);
+              newdiv.innerHTML = color_template_right1 + i + color_template_right3 + "&nbsp;&nbsp;" + mark_template_right1 + i + mark_template_right3;
+              ni.appendChild(newdiv);
+          //alert(newdiv.innerHTML+" : " );
+          }
+          
+          for(i=2; i<3; i++) {
+              var ni = document.getElementById('myDivleft');
+              var num = 1;
+              var newdiv = document.createElement('div');
+              var divIdName = 'my'+num+'Div';
+              newdiv.setAttribute('id',divIdName);
+              newdiv.innerHTML = additional_data_left[plot_name][i];
+              ni.appendChild(newdiv);
+              position_of_color = 'myDivright';
+              
+              var ni = document.getElementById('myDivright');
+              var num = 1;
+              var newdiv = document.createElement('div');
+              var divIdName = 'my'+num+'Div';
+              newdiv.setAttribute('id',divIdName);
+              newdiv.innerHTML = color_template_right1 + i + color_template_right4 + "&nbsp;&nbsp;" + mark_template_right1 + i + mark_template_right4;
+              ni.appendChild(newdiv);
+          //alert(newdiv.innerHTML+" : " );
+          }
+      } else {
+          var ni = document.getElementById(position_of_color);
+          var num = 2;
+          var newdiv = document.createElement('div');
+          var divIdName = 'my'+num+'Div';
+          newdiv.setAttribute('id',divIdName);
+          newdiv.innerHTML = color_template_left;
+          ni.appendChild(newdiv);
+          
+          var ni = document.getElementById('myDivright');
+          var num = 1;
+          var newdiv = document.createElement('div');
+          var divIdName = 'my'+num+'Div';
+          newdiv.setAttribute('id',divIdName);
+          newdiv.innerHTML = "<td class=\"right\">" + color_template_right1 + "1" + color_template_right2 + "</td></tr><table>";
+          ni.appendChild(newdiv);
+          
+          
+          
+          var ni = document.getElementById(position_of_color);
+          var num = 2;
+          var newdiv = document.createElement('div');
+          var divIdName = 'my'+num+'Div';
+          newdiv.setAttribute('id',divIdName);
+          newdiv.innerHTML = mark_template_left;
+          ni.appendChild(newdiv);
+          
+          var ni = document.getElementById('myDivright');
+          var num = 1;
+          var newdiv = document.createElement('div');
+          var divIdName = 'my'+num+'Div';
+          newdiv.setAttribute('id',divIdName);
+          newdiv.innerHTML = "<td class=\"right\">" + mark_template_right1 + "1" + mark_template_right2 + "</td></tr><table>";
+          ni.appendChild(newdiv);  
+      }
+      
+      
+      
+      
+    } 
+	
+    
+
+
